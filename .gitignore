@@ -1,0 +1,12 @@
+# Exclude the virtual environment
+django_my_site/
+staticfiles/
+
+# Ignore other common files
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+.idea/
+.vscode/
