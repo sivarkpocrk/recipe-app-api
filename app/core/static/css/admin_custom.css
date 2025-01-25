@@ -1,0 +1,7 @@
+.custom-class input[type="password"] {
+    width: 100%; /* Expand the password field to occupy full width */
+    max-width: 600px; /* Set a maximum width to avoid overly large fields */
+    padding: 8px; /* Add padding for a better user experience */
+    border: 1px solid #ccc; /* Define a clean border style */
+    border-radius: 4px; /* Rounded corners for aesthetics */
+}
