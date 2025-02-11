@@ -130,10 +130,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/static/'
-
-MEDIA_URL = '/static/media/'
-
 STATIC_ROOT = '/vol/web/static'
+MEDIA_URL = '/static/media/'
 MEDIA_ROOT = '/vol/web/media'
 
 # Default primary key field type
@@ -148,6 +146,10 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'COMPONENT_SPLI_REQUEST': True,
+    'COMPONENT_SPLIT_REQUEST': True,
 }
+
+#DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+
+#DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # or an appropriate value in bytes
 
