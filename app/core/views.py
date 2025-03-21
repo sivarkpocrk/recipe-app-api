@@ -8,8 +8,8 @@ from rest_framework.response import Response
 # Create your views here.
 
 
-def test(request):
-    return HttpResponse("Hello World")
+# def test(request):
+#     return HttpResponse("Hello World")
 
 @api_view(['GET'])
 def health_check(request):
