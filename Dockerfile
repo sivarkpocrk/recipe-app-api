@@ -38,6 +38,7 @@ RUN python -m venv /py && \
     chown -R django-user:django-user /vol/web && \
     # Give full write permissions to media
     chmod -R 777 /vol/web/media && \
+    chmod -R 777 /vol/web/ && \
     # Read-only permissions for static files
     chmod -R 755 /vol/web/static && \
     chmod -R +x /scripts

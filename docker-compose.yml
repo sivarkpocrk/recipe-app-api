@@ -5,6 +5,7 @@ services:
       args:
         - DEV=true
       dockerfile: Dockerfile
+      user: "${UID}:${GID}"
     ports:
       - "8000:8000"
     volumes:
