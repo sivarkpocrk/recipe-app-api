@@ -22,6 +22,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import Recipe, Tag, Ingredient
 from recipe import serializers
 
+
 @extend_schema_view(
     list=extend_schema(
         parameters=[
@@ -85,10 +86,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(recipe, data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+           serializer.save()
+           return Response(serializer.data, status=status.HTTP_200_OK)
         print (f'{serializer.errors}')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @extend_schema_view(
     list=extend_schema(
