@@ -1,7 +1,7 @@
 """
 Core views for app.
 """
-from django.http import HttpResponse
+from django.http import HttpResponse  # noqa
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 

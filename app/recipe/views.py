@@ -7,7 +7,7 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiTypes,
 )
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.types import OpenApiTypes  # noqa
 
 from rest_framework import (
     viewsets,
@@ -86,9 +86,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(recipe, data=request.data)
 
         if serializer.is_valid():
-           serializer.save()
-           return Response(serializer.data, status=status.HTTP_200_OK)
-        print (f'{serializer.errors}')
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        print(f'{serializer.errors}')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -113,8 +113,8 @@ class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
 
     def get_queryset(self):
         """Filter the queryset to authenticated user."""
-        assigned_only = bool (
-            int(self.request.query_params.get('assigned_only',0))
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', 0))
         )
         queryset = self.queryset
         if assigned_only:

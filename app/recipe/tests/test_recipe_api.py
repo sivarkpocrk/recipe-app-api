@@ -458,8 +458,10 @@ class ImageUploadTests(TestCase):
             image_file.seek(0)
 
             # Wrap the file with SimpleUploadedFile
-            image_file = SimpleUploadedFile(image_file.name, image_file.read(),
-                                             content_type='image/jpeg')
+            image_file = SimpleUploadedFile(
+                image_file.name, image_file.read(),
+                content_type='image/jpeg'
+            )
             payload = {'image': image_file}
             res = self.client.post(url, payload, format='multipart')
 
