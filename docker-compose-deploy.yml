@@ -36,7 +36,7 @@ services:
       - 80:8000
     volumes:
       - static-data:/vol/static
-      - media-data:/vol/web/media
+      - media-data:/vol/media
 
 volumes:
   postgres-data:
