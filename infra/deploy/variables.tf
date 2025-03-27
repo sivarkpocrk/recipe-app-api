@@ -26,3 +26,7 @@ variable "db_password" {
   #   error_message = "Password must be between 8 and 40 characters long."
   # }
 }
+
+variable "ecr_proxy_image" {
+  description = "Path to the ECR repo with the proxy image"
+}
