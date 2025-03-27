@@ -30,6 +30,10 @@ resource "aws_security_group" "rds" {
   }
 }
 
+output "debug_password" {
+  value = length(var.db_password) > 0 ? "Password is set with length ${length(var.db_password)}" : "Password is empty!"
+}
+
 resource "aws_db_instance" "main" {
   identifier                 = "${local.prefix}-db"
   db_name                    = "recipe"
@@ -51,3 +55,6 @@ resource "aws_db_instance" "main" {
     Name = "${local.prefix}-main"
   }
 }
+
+
+
