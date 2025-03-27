@@ -125,7 +125,7 @@ resource "aws_security_group" "endpoint_access" {
 
 resource "aws_vpc_endpoint" "ecr" {
   vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${data.aws_region.current}.ecr.api"
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecr.api"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
 
