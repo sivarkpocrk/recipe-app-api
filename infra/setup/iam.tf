@@ -70,7 +70,9 @@ data "aws_iam_policy_document" "ecr" {
       "ecr:UploadLayerPart",
       "ecr:InitiateLayerUpload",
       "ecr:BatchCheckLayerAvailability",
-      "ecr:PutImage"
+      "ecr:PutImage",
+      "ecr:BatchGetImage",
+      "ecr:DescribeRepositories"
     ]
     resources = [
       aws_ecr_repository.app.arn,
