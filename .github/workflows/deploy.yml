@@ -39,21 +39,6 @@ jobs:
               docker build --compress -t ${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA proxy/
               docker push ${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA
 
-          - name: Debug Environment Variables
-            run: |
-                echo "Checking  working if TF_VAR_db_password is set..."
-                echo "Password length: ${#TF_VAR_db_password}"
-                echo "TF_VAR_db_password is: $TF_VAR_db_password"
-                if [[ -z "$TF_VAR_db_password" ]]; then
-                  echo "ERROR: TF_VAR_db_password is not set!"
-                  exit 1
-                else
-                  echo "TF_VAR_db_password is set (but hidden for security)."
-                fi
-            shell: bash
-            env:
-                TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
-
           - name: Terraform Apply
             env:
               AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
