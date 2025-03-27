@@ -42,6 +42,7 @@ jobs:
           - name: Debug Environment Variables
             run: |
                 echo "Checking if TF_VAR_db_password is set..."
+                echo "Password length: ${#TF_VAR_db_password}"
                 echo "TF_VAR_db_password is: $TF_VAR_db_password"
                 if [[ -z "$TF_VAR_db_password" ]]; then
                   echo "ERROR: TF_VAR_db_password is not set!"
@@ -49,6 +50,7 @@ jobs:
                 else
                   echo "TF_VAR_db_password is set (but hidden for security)."
                 fi
+            shell: bash
             env:
                 TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
 
