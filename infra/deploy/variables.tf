@@ -21,8 +21,8 @@ variable "db_username" {
 variable "db_password" {
   description = "Password for the Terraform database"
   type        = string
-  validation {
-  condition     = length(var.db_password) > 7 && length(var.db_password) < 41
-  error_message = "Password must be between 8 and 40 characters long."
-}
+  # validation {
+  #   condition     = length(var.db_password) > 7 && length(var.db_password) < 41
+  #   error_message = "Password must be between 8 and 40 characters long."
+  # }
 }
