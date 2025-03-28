@@ -360,7 +360,7 @@ data "aws_iam_policy_document" "efs" {
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeVpcs",
       "ec2:DescribeNetworkInterfaceAttribute", # Added
-      "ec2:DeleteNetworkInterface"  # Added
+      "ec2:DeleteNetworkInterface"             # Added
     ]
     resources = ["*"]
   }
