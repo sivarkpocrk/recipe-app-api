@@ -184,7 +184,17 @@ resource "aws_security_group" "ecs_service" {
   }
 }
 
+resource "null_resource" "ensure_ecs_service_role" {
+  provisioner "local-exec" {
+    command = "aws iam create-service-linked-role --aws-service-name ecs.amazonaws.com || true"
+  }
+}
+
+
 resource "aws_ecs_service" "api" {
+
+  depends_on = [null_resource.ensure_ecs_service_role]
+
   name                   = "${local.prefix}-api"
   cluster                = aws_ecs_cluster.main.name
   task_definition        = aws_ecs_task_definition.api.family
