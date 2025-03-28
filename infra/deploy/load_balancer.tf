@@ -28,3 +28,10 @@ resource "aws_security_group" "lb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_lb" "api" {
+  name               = "${local.prefix}-lb"
+  load_balancer_type = "application"
+  subnets            = [aws_subnet.public_a, aws_subnet.public_b]
+  security_groups    = [aws_security_group.lb.id]
+}
