@@ -29,6 +29,7 @@ resource "aws_iam_policy" "task_ssm_policy" {
   path        = "/"
   description = "Policy to allow System Manager to execute in container"
   policy      = file("./templates/ecs/task-ssm-policy.json")
+  # policy = file("${path.module}/templates/ecs/task-ssm-policy.json")
 }
 
 resource "aws_iam_role_policy_attachment" "task_ssm_policy" {
