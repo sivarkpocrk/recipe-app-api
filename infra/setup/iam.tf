@@ -352,6 +352,13 @@ data "aws_iam_policy_document" "efs" {
       "elasticfilesystem:CreateAccessPoint",
       "elasticfilesystem:CreateFileSystem",
       "elasticfilesystem:TagResource",
+      # Required EC2 permissions for mount targets
+      "ec2:DescribeSubnets",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:CreateNetworkInterface",
+      "ec2:AttachNetworkInterface",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeVpcs",
     ]
     resources = ["*"]
   }
