@@ -1,4 +1,4 @@
-name: Terraform Setup and Destroy
+name: Terraform Setup, Deploy, and Destroy
 
 on:
   workflow_dispatch:
@@ -19,25 +19,50 @@ on:
           - destroy
 
 jobs:
-  terraform:
-    name: Terraform Setup or Destroy
+  test-lint:
+    uses: ./.github/workflows/test-and-lint.yml
+    name: Test and Lint
+    secrets:
+      DOCKERHUB_USER: ${{ vars.DOCKERHUB_USER }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  setup:
+    name: Terraform Setup
     runs-on: ubuntu-22.04
+    needs: [test-lint]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set Up Terraform
+      - name: Set Vars
+        run: |
+          if [[ $GITHUB_REF == 'refs/heads/prod' ]]; then
+            echo "prod" > .workspace
+          else
+            echo "staging" > .workspace
+          fi
+
+      - name: Install Dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y terraform
+          sudo apt-get install -y gnupg software-properties-common curl
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          - name: Install Terraform
+          run: |
+            if terraform -version &>/dev/null; then
+              echo "Terraform is already installed."
+              terraform -version
+            else
+              echo "Terraform not found. Installing..."
+              sudo apt-get update -y
+              sudo apt-get install -y gnupg software-properties-common curl
+              curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+              sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+              sudo apt-get update -y
+              sudo apt-get install -y terraform
+              terraform -version
+            fi
 
       - name: Terraform Init for Setup
         run: |
@@ -56,6 +81,34 @@ jobs:
             terraform destroy -auto-approve
           fi
 
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-22.04
+    needs: [setup]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Vars
+        run: |
+          if [[ $GITHUB_REF == 'refs/heads/prod' ]]; then
+            echo "prod" > .workspace
+          else
+            echo "staging" > .workspace
+          fi
+
+      - name: Push to ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+          docker build --compress -t ${{ vars.ECR_REPO_APP }}:$GITHUB_SHA .
+          docker push ${{ vars.ECR_REPO_APP }}:$GITHUB_SHA
+          docker build --compress -t ${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA proxy/
+          docker push ${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA
+
       - name: Terraform Init for Deploy
         run: |
           cd infra/deploy
@@ -63,10 +116,17 @@ jobs:
 
       - name: Terraform Apply/Destroy for Deploy
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
+          TF_VAR_django_secret_key: ${{ secrets.TF_VAR_DJANGO_SECRET_KEY }}
           TF_WORKSPACE: ${{ github.event.inputs.environment }}
         run: |
+          export TF_VAR_ecr_app_image="${{ vars.ECR_REPO_APP }}:$GITHUB_SHA"
+          export TF_VAR_ecr_proxy_image="${{ vars.ECR_REPO_PROXY }}:$GITHUB_SHA"
+          workspace=$(cat .workspace)
           cd infra/deploy
-          terraform workspace select $TF_WORKSPACE || terraform workspace new $TF_WORKSPACE
+          terraform workspace select $workspace || terraform workspace new $workspace
           if [ "${{ github.event.inputs.action }}" == "apply" ]; then
             terraform apply -auto-approve
           else
@@ -75,6 +135,8 @@ jobs:
 
       - name: Cleanup Workspace (if destroyed)
         if: ${{ github.event.inputs.action == 'destroy' }}
+        env:
+          TF_WORKSPACE: ${{ github.event.inputs.environment }}
         run: |
           cd infra/deploy
           terraform workspace select default
