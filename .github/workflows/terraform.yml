@@ -43,13 +43,8 @@ jobs:
             echo "staging" > .workspace
           fi
 
-      - name: Install Dependencies
+      - name: Install Terraform
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y gnupg software-properties-common curl
-
-          - name: Install Terraform
-          run: |
             if terraform -version &>/dev/null; then
               echo "Terraform is already installed."
               terraform -version
