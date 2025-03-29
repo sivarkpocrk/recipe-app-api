@@ -5,7 +5,7 @@ variable "tf_state_bucket" {
 
 variable "tf_state_lock_table" {
   description = "Name of the DynamoDB table for TF state locking"
-  default     = "devops-siva-recp-app-tf-lock"
+  default     = "devops-sivas-recp-app-tf-lock"
 }
 
 variable "project" {
